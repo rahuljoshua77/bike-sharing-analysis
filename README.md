@@ -9,20 +9,6 @@ This Streamlit application provides an interactive dashboard for analyzing bike 
 - **Hourly Rental Patterns**: View rental patterns by hour (hourly data only).
 - **RFM Analysis**: A simple analysis of recency, frequency, and monetary value of rentals.
 
-Bike Sharing Analysis Project Structure
-=======================================
-
-This document outlines the structure of the Bike Sharing Analysis project directory.
-
-bike-sharing-analysis/
-│
-├── app.py
-├── day.csv
-├── hour.csv
-├── bike\_sharing\_analysis\_rfm.ipynb
-├── requirements.txt
-└── README.md
-
 ## Setup and Installation
 
 1. Clone the repository:
