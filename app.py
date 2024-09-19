@@ -21,42 +21,51 @@ else:
     st.subheader('Data Penyewaan Sepeda (Hour)')
     st.write(df_hour.head())
 
-# Visualisasi jumlah penyewaan berdasarkan suhu
-st.subheader('Visualisasi Pengaruh Suhu Terhadap Jumlah Penyewaan')
-fig, ax = plt.subplots()
-if dataset == "Day":
-    sns.scatterplot(x='temp', y='cnt', data=df_day, ax=ax)
-else:
-    sns.scatterplot(x='temp', y='cnt', data=df_hour, ax=ax)
-ax.set_title('Pengaruh Suhu Terhadap Penyewaan')
-ax.set_xlabel('Temperature (Normalized)')
-ax.set_ylabel('Count of Rentals')
-st.pyplot(fig)
+# Sidebar untuk memilih analisis
+analysis = st.sidebar.selectbox("Pilih analisis", 
+                                ("Visualisasi Pengaruh Suhu Terhadap Jumlah Penyewaan", 
+                                 "Visualisasi Pola Penyewaan Berdasarkan Jam",
+                                 "Analisis RFM Sederhana"))
 
-# Visualisasi pola penyewaan berdasarkan jam
-st.subheader('Visualisasi Pola Penyewaan Berdasarkan Jam')
-if dataset == "Hour":
+# Visualisasi pengaruh suhu terhadap jumlah penyewaan
+if analysis == "Visualisasi Pengaruh Suhu Terhadap Jumlah Penyewaan":
+    st.subheader('Visualisasi Pengaruh Suhu Terhadap Jumlah Penyewaan')
     fig, ax = plt.subplots()
-    sns.lineplot(x='hr', y='cnt', data=df_hour, ax=ax)
-    ax.set_title('Pola Penyewaan Berdasarkan Jam')
-    ax.set_xlabel('Hour')
+    if dataset == "Day":
+        sns.scatterplot(x='temp', y='cnt', data=df_day, ax=ax)
+    else:
+        sns.scatterplot(x='temp', y='cnt', data=df_hour, ax=ax)
+    ax.set_title('Pengaruh Suhu Terhadap Penyewaan')
+    ax.set_xlabel('Temperature (Normalized)')
     ax.set_ylabel('Count of Rentals')
     st.pyplot(fig)
-else:
-    st.write("Pola ini hanya tersedia untuk data hourly.")
+
+# Visualisasi pola penyewaan berdasarkan jam
+elif analysis == "Visualisasi Pola Penyewaan Berdasarkan Jam":
+    if dataset == "Hour":
+        st.subheader('Visualisasi Pola Penyewaan Berdasarkan Jam')
+        fig, ax = plt.subplots()
+        sns.lineplot(x='hr', y='cnt', data=df_hour, ax=ax)
+        ax.set_title('Pola Penyewaan Berdasarkan Jam')
+        ax.set_xlabel('Hour')
+        ax.set_ylabel('Count of Rentals')
+        st.pyplot(fig)
+    else:
+        st.write("Pola ini hanya tersedia untuk data hourly.")
 
 # Analisis RFM
-st.subheader('Analisis RFM Sederhana')
-df_day['dteday'] = pd.to_datetime(df_day['dteday'])
-max_date = df_day['dteday'].max()
-df_day['recency'] = (max_date - df_day['dteday']).dt.days
-df_day['frequency'] = df_day.groupby('yr')['cnt'].transform('sum')
-df_day['monetary'] = df_day['cnt']
+elif analysis == "Analisis RFM Sederhana":
+    st.subheader('Analisis RFM Sederhana')
+    df_day['dteday'] = pd.to_datetime(df_day['dteday'])
+    max_date = df_day['dteday'].max()
+    df_day['recency'] = (max_date - df_day['dteday']).dt.days
+    df_day['frequency'] = df_day.groupby('yr')['cnt'].transform('sum')
+    df_day['monetary'] = df_day['cnt']
 
-# Menampilkan scatter plot dari analisis RFM
-fig, ax = plt.subplots()
-sns.scatterplot(x='recency', y='monetary', hue='frequency', data=df_day, ax=ax, palette='viridis')
-ax.set_title('RFM Analysis - Recency vs Monetary')
-ax.set_xlabel('Recency (Days since last rental)')
-ax.set_ylabel('Monetary (Total Rentals)')
-st.pyplot(fig)
+    # Menampilkan scatter plot dari analisis RFM
+    fig, ax = plt.subplots()
+    sns.scatterplot(x='recency', y='monetary', hue='frequency', data=df_day, ax=ax, palette='viridis')
+    ax.set_title('RFM Analysis - Recency vs Monetary')
+    ax.set_xlabel('Recency (Days since last rental)')
+    ax.set_ylabel('Monetary (Total Rentals)')
+    st.pyplot(fig)
